@@ -17,6 +17,12 @@ namespace WarcraftlogsGuildsDeathReporter
 			await reportsFinder.findAllReports("https://www.warcraftlogs.com/guild/reports-list/559073?zone=26&boss=0&difficulty=0&class=Any&spec=Any&keystone=0&kills=0&duration=0");
 			string[] results = reportsFinder.getResults();
 
+			FightsFinder fightsFinder = new FightsFinder();
+			foreach (string reportUrl in results)
+			{
+				await fightsFinder.findAllFights(reportUrl);
+			}
+
 			Console.WriteLine("\n------------------------------------------------------------------------\n");
 			for (int i = 0; i < results.Length; ++i)
 			{

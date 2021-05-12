@@ -5,18 +5,17 @@ using AngleSharp.Dom;
 
 namespace WarcraftlogsGuildsDeathReporter
 {
-	public class ReportsFinder
+	public class ReportsFinder : FinderBase
 	{
-		List<IHtmlDocument> allPagesHtmlDocs = new List<IHtmlDocument>();
-		List<string> extraReportPagesUrls = new List<string>();
-		List<string> allReportUrls = new List<string>();
+		private List<IHtmlDocument> allHtmlDocs = new List<IHtmlDocument>();
+		private List<string> extraReportPagesUrls = new List<string>();
 
 		public async Task findAllReports(string guildReportsUrl)
 		{
 			clearDirtyData();
 
 			IHtmlDocument rootDoc = await WebScraper.scrapeWebsite(guildReportsUrl);
-			allPagesHtmlDocs.Add(rootDoc);
+			allHtmlDocs.Add(rootDoc);
 
 			await findAdditionalReportPages(rootDoc);
 			findAllReportUrls();
@@ -24,9 +23,9 @@ namespace WarcraftlogsGuildsDeathReporter
 
 		private void clearDirtyData()
 		{
-			allPagesHtmlDocs.Clear();
+			allHtmlDocs.Clear();
 			extraReportPagesUrls.Clear();
-			allReportUrls.Clear();
+			allFoundUrls.Clear();
 		}
 
 		private async Task findAdditionalReportPages(IHtmlDocument rootDoc)
@@ -51,35 +50,23 @@ namespace WarcraftlogsGuildsDeathReporter
 			{
 				foreach (string url in extraReportPagesUrls)
 				{
-					allPagesHtmlDocs.Add(await WebScraper.scrapeWebsite(url));
+					allHtmlDocs.Add(await WebScraper.scrapeWebsite(url));
 				}
 			}
 		}
 
 		private void findAllReportUrls()
 		{
-			foreach (IHtmlDocument document in allPagesHtmlDocs)
+			foreach (IHtmlDocument document in allHtmlDocs)
 			{
 				foreach (IElement element in document.All)
 				{
 					if (element.ChildElementCount == 0 && element.OuterHtml.Contains("<a href=\"/reports/"))
 					{
-						allReportUrls.Add(CommonConstants.kWarcraftlogsUrl + element.GetAttribute("href"));
+						allFoundUrls.Add(CommonConstants.kWarcraftlogsUrl + element.GetAttribute("href"));
 					}
 				}
 			}
-		}
-
-		public string[] getResults()
-		{
-			string[] returnArray = null;
-
-			if (allReportUrls != null)
-			{
-				returnArray = allReportUrls.ToArray();
-			}
-
-			return returnArray;
 		}
 	}
 }

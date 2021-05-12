@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="source\htmlRetrieval\FightsFinder.cs" />
+    <Compile Include="source\htmlRetrieval\FinderBase.cs" />
     <Compile Include="source\htmlRetrieval\WebScraper.cs" />
     <Compile Include="source\htmlRetrieval\ReportsFinder.cs" />
     <Compile Include="source\Program.cs" />
